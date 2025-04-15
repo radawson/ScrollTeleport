@@ -1,0 +1,45 @@
+name: ScrollTeleportation
+version: '${version}'
+main: org.clockworx.scrollteleportation.ScrollTeleportation
+api-version: '1.21'
+authors: [ClockWorX LLC, Rick Dawson]
+description: A modern RPG-like teleportation system using paperscrolls
+website: https://github.com/radawson/ScrollTeleportation
+
+permissions:
+  scrollteleportation.teleport:
+    description: Allows a player to use scrolls
+    default: op
+  scrollteleportation.give:
+    description: Allows a player to give scrolls
+    default: op
+  scrollteleportation.walkbypass:
+    description: Players with this permission can walk while teleports are being cast
+    default: op
+  scrollteleportation.invbypass:
+    description: Players with this permission can open inventories while teleports are being cast
+    default: op
+  scrollteleportation.delaybypass:
+    description: Players with this permission can bypass delays
+    default: op
+  scrollteleportation.usesbypass:
+    description: Players with this permission can bypass the use counter
+    default: op    
+  scrollteleportation.potioneffectbypass:
+    description: Players with this permission can bypass potion effects
+    default: op
+  scrollteleportation.set:
+    description: Allows a player to set scroll variables
+    default: op
+  scrollteleportation.create:
+    description: Allows a player to create scrolls
+    default: op
+  scrollteleportation.reload:
+    description: Allows a player to reload config files
+    default: op          
+
+commands:
+  scroll:
+    description: Main command for Scroll Teleportation
+    usage: /<command> [subcommand]
+    aliases: [st, scrollteleportation, scrolls] 
