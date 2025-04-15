@@ -58,8 +58,11 @@ general:
 # Messages file location
 messages-file: "messages.yml"
 
+Scroll:
+  material: "PAPER"
+
 # Scroll Settings
-scrolls:
+Scrolls:
   # Default scroll settings
   default:
     # Maximum number of uses before the scroll is consumed

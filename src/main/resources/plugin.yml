@@ -1,5 +1,5 @@
 name: ScrollTeleportation
-version: '1.0.4'
+version: '1.0.5'
 main: org.clockworx.scrollteleportation.ScrollTeleportation
 api-version: '1.21'
 authors: [ClockWorX LLC, Rick Dawson]

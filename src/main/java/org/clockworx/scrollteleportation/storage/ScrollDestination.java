@@ -1,7 +1,6 @@
 package org.clockworx.scrollteleportation.storage;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +12,7 @@ import org.clockworx.scrollteleportation.files.LanguageString;
 import org.clockworx.scrollteleportation.exceptions.DestinationInvalidException;
 
 import java.util.List;
-import java.util.Optional;
+
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -46,6 +45,15 @@ public class ScrollDestination {
         this.type = type;
         this.location = location;
         this.range = range;
+        this.random = new Random();
+    }
+
+    private ScrollDestination() {
+        this.plugin = ScrollTeleportation.getInstance();
+        this.locationString = "";
+        this.location = null;
+        this.range = 0;
+        this.name = "";
         this.random = new Random();
     }
 
@@ -100,28 +108,56 @@ public class ScrollDestination {
             throw new DestinationInvalidException("Location string cannot be null or empty");
         }
 
-        ScrollDestination destination = new ScrollDestination(ScrollTeleportation.getInstance(), "", DestinationType.FIXED_LOCATION, null, 0);
-        destination.locationString = locationString.toLowerCase().trim();
+        locationString = locationString.trim().toLowerCase();
+        // Store the original location string in the destination object later
 
-        if (!locationString.contains(",")) {
-            // Can either be a fixed name or random location
-            if (locationString.contains("random")) {
-                destination.setDestinationType(DestinationType.RANDOM);
-            } else {
-                destination.setDestinationType(DestinationType.FIXED_NAME);
-                destination.setupFixedNameLocation(locationString);
-            }
-        } else {
-            // It can either be random radius or a fixed location
-            if (locationString.contains("random_radius")) {
-                destination.setDestinationType(DestinationType.RANDOM_IN_RANGE);
-                destination.setupRandomRadiusLocation(locationString);
-            } else {
-                destination.setDestinationType(DestinationType.FIXED_LOCATION);
-                destination.setupFixedLocation(locationString);
-            }
+        // Check for spawn location format
+        if (locationString.contains("spawn")) {
+            ScrollDestination destination = new ScrollDestination();
+            destination.type = DestinationType.SPAWN;
+            destination.locationString = locationString; // Store the original location string
+            destination.setupSpawnLocation(locationString);
+            return destination;
         }
 
+        // Check for random location format
+        if (locationString.startsWith("random")) {
+            ScrollDestination destination = new ScrollDestination();
+            destination.type = DestinationType.RANDOM;
+            destination.locationString = locationString; // Store the original location string
+            if (locationString.contains("radius")) {
+                destination.type = DestinationType.RANDOM_IN_RANGE;
+                destination.setupRandomRadiusLocation(locationString);
+            } else {
+                destination.type = DestinationType.RANDOM;
+                destination.setupRandomLocation(locationString);
+            }
+            return destination;
+        }
+
+        // Check if it's a fixed location format (world, x, y, z)
+        if (locationString.contains(",")) {
+            ScrollDestination destination = new ScrollDestination();
+            destination.type = DestinationType.FIXED_LOCATION;
+            destination.locationString = locationString; // Store the original location string
+            destination.setupFixedLocation(locationString);
+            return destination;
+        }
+
+        // Check for fixed name location format
+        if (locationString.contains(" ")) {
+            ScrollDestination destination = new ScrollDestination();
+            destination.type = DestinationType.FIXED_NAME;
+            destination.locationString = locationString; // Store the original location string
+            destination.setupFixedNameLocation(locationString);
+            return destination;
+        }
+
+        // If we get here, assume it's a fixed location format
+        ScrollDestination destination = new ScrollDestination();
+        destination.type = DestinationType.FIXED_LOCATION;
+        destination.locationString = locationString; // Store the original location string
+        destination.setupFixedLocation(locationString);
         return destination;
     }
 
@@ -137,6 +173,7 @@ public class ScrollDestination {
             case RANDOM -> getRandomLocation();
             case RANDOM_IN_RANGE -> getRandomLocationWithRadius();
             case FIXED_NAME -> getFixedNameLocation();
+            case SPAWN -> getSpawnLocation();
         };
 
         if (result == null) {
@@ -246,6 +283,7 @@ public class ScrollDestination {
             case RANDOM -> getRandomLocationString();
             case RANDOM_IN_RANGE -> getRandomRadiusLocationString();
             case FIXED_NAME -> getFixedNameLocationString();
+            case SPAWN -> getSpawnLocationString();
         };
     }
 
@@ -349,12 +387,26 @@ public class ScrollDestination {
                 throw new DestinationInvalidException("Spawn location must specify a world");
             }
 
-            World world = Bukkit.getWorld(params[1]);
+            // Handle both "spawn world" and "world spawn" formats
+            String worldName;
+            if (params[0].equals("spawn")) {
+                worldName = params[1];
+            } else {
+                worldName = params[0];
+            }
+
+            World world = Bukkit.getWorld(worldName);
             if (world == null) {
-                throw new DestinationInvalidException("World not found: " + params[1]);
+                throw new DestinationInvalidException("World not found: " + worldName);
             }
 
             this.location = world.getSpawnLocation();
+            return;
+        }
+
+        // Check if it's a fixed location format (world, x, y, z)
+        if (locationString.contains(",")) {
+            setupFixedLocation(locationString);
             return;
         }
 
@@ -440,6 +492,68 @@ public class ScrollDestination {
         this.location = location;
     }
 
+    private Location getSpawnLocation() throws DestinationInvalidException {
+        if (location == null) {
+            throw new DestinationInvalidException("Spawn location not set");
+        }
+        return location;
+    }
+
+    private String getSpawnLocationString() {
+        return "spawn point in " + location.getWorld().getName();
+    }
+
+    private void setupSpawnLocation(String locationString) throws DestinationInvalidException {
+        String[] params = locationString.split(" ");
+        if (params.length < 2) {
+            throw new DestinationInvalidException("Spawn location must specify a world");
+        }
+
+        // Handle both "spawn world" and "world spawn" formats
+        String worldName;
+        if (params[0].equals("spawn")) {
+            worldName = params[1];
+        } else {
+            worldName = params[0];
+        }
+
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            throw new DestinationInvalidException("World not found: " + worldName);
+        }
+
+        this.location = world.getSpawnLocation();
+    }
+
+    private void setupRandomLocation(String locationString) throws DestinationInvalidException {
+        // For "random" without a world specified, use any world
+        if (locationString.equals("random")) {
+            List<World> worlds = Bukkit.getWorlds();
+            if (worlds.isEmpty()) {
+                throw new DestinationInvalidException("No worlds available for random location");
+            }
+            World world = worlds.get(random.nextInt(worlds.size()));
+            this.location = world.getSpawnLocation();
+            return;
+        }
+
+        // For "random world" format
+        String[] params = locationString.split(" ");
+        if (params.length < 2) {
+            throw new DestinationInvalidException("Random location must specify a world");
+        }
+
+        String worldName = params[1];
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            throw new DestinationInvalidException("World not found: " + worldName);
+        }
+
+        // For random locations, we'll set a default location in the world
+        // The actual random location will be generated when getLocation() is called
+        this.location = world.getSpawnLocation();
+    }
+
     /**
      * Enum representing the different types of destinations.
      */
@@ -447,6 +561,7 @@ public class ScrollDestination {
         FIXED_LOCATION,
         RANDOM,
         RANDOM_IN_RANGE,
-        FIXED_NAME
+        FIXED_NAME,
+        SPAWN
     }
 } 
