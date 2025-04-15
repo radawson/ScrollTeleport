@@ -1,0 +1,144 @@
+# ScrollTeleportation Configuration
+
+# General Settings
+general:
+  # Whether to cancel teleportation when player moves
+  cancel-on-move: true
+  # Whether to cancel teleportation when player takes damage
+  cancel-on-damage: true
+  # Whether to cancel teleportation when player opens inventory
+  cancel-on-inventory: true
+  # Whether to cancel teleportation when player interacts with blocks
+  cancel-on-interact: true
+  # Whether to cancel teleportation when player uses items
+  cancel-on-item-use: true
+  # Whether to cancel teleportation when player attacks
+  cancel-on-attack: true
+  # Whether to cancel teleportation when player jumps
+  cancel-on-jump: true
+  # Whether to cancel teleportation when player crouches
+  cancel-on-crouch: true
+  # Whether to cancel teleportation when player sprints
+  cancel-on-sprint: true
+  # Whether to cancel teleportation when player flies
+  cancel-on-fly: true
+  # Whether to cancel teleportation when player swims
+  cancel-on-swim: true
+  # Whether to cancel teleportation when player climbs
+  cancel-on-climb: true
+  # Whether to cancel teleportation when player falls
+  cancel-on-fall: true
+  # Whether to cancel teleportation when player takes fall damage
+  cancel-on-fall-damage: true
+  # Whether to cancel teleportation when player takes fire damage
+  cancel-on-fire-damage: true
+  # Whether to cancel teleportation when player takes lava damage
+  cancel-on-lava-damage: true
+  # Whether to cancel teleportation when player takes drowning damage
+  cancel-on-drowning-damage: true
+  # Whether to cancel teleportation when player takes explosion damage
+  cancel-on-explosion-damage: true
+  # Whether to cancel teleportation when player takes void damage
+  cancel-on-void-damage: true
+  # Whether to cancel teleportation when player takes starvation damage
+  cancel-on-starvation-damage: true
+  # Whether to cancel teleportation when player takes poison damage
+  cancel-on-poison-damage: true
+  # Whether to cancel teleportation when player takes wither damage
+  cancel-on-wither-damage: true
+  # Whether to cancel teleportation when player takes lightning damage
+  cancel-on-lightning-damage: true
+  # Whether to cancel teleportation when player takes thorns damage
+  cancel-on-thorns-damage: true
+  # Whether to cancel teleportation when player takes magic damage
+  cancel-on-magic-damage: true
+  # Whether to cancel teleportation when player takes custom damage
+  cancel-on-custom-damage: true
+
+# Scroll Settings
+scrolls:
+  # Default scroll settings
+  default:
+    # Maximum number of uses before the scroll is consumed
+    max-uses: 1
+    # Delay in seconds before teleportation
+    delay: 3
+    # Whether to apply blindness effect during teleportation
+    blindness: true
+    # Whether to apply slowness effect during teleportation
+    slowness: true
+    # Whether to apply levitation effect during teleportation
+    levitation: true
+    # Whether to apply glowing effect during teleportation
+    glowing: true
+    # Whether to apply wither effect during teleportation
+    wither: false
+    # Whether to apply poison effect during teleportation
+    poison: false
+    # Whether to apply weakness effect during teleportation
+    weakness: false
+    # Whether to apply hunger effect during teleportation
+    hunger: false
+    # Whether to apply mining fatigue effect during teleportation
+    mining-fatigue: false
+    # Whether to apply blindness effect during teleportation
+    blindness: true
+    # Whether to apply slowness effect during teleportation
+    slowness: true
+    # Whether to apply levitation effect during teleportation
+    levitation: true
+    # Whether to apply glowing effect during teleportation
+    glowing: true
+    # Whether to apply wither effect during teleportation
+    wither: false
+    # Whether to apply poison effect during teleportation
+    poison: false
+    # Whether to apply weakness effect during teleportation
+    weakness: false
+    # Whether to apply hunger effect during teleportation
+    hunger: false
+    # Whether to apply mining fatigue effect during teleportation
+    mining-fatigue: false
+
+# Language Settings
+language:
+  prefix: "&8[&bScrollTeleport&8]"
+  messages:
+    teleport-started: "&aTeleportation started! Don't move..."
+    teleport-cancelled: "&cTeleportation cancelled!"
+    teleport-completed: "&aTeleportation completed!"
+    teleport-failed: "&cTeleportation failed!"
+    scroll-given: "&aYou have been given a scroll!"
+    scroll-received: "&aYou received a scroll from %player%!"
+    scroll-created: "&aScroll created successfully!"
+    scroll-used: "&aScroll used! %uses% uses remaining."
+    scroll-consumed: "&cScroll consumed!"
+    scroll-invalid: "&cInvalid scroll!"
+    scroll-no-permission: "&cYou don't have permission to use this scroll!"
+    scroll-no-uses: "&cThis scroll has no uses remaining!"
+    scroll-no-delay: "&cYou must wait %delay% seconds before using another scroll!"
+    scroll-no-walk: "&cYou can't walk while teleporting!"
+    scroll-no-inventory: "&cYou can't open your inventory while teleporting!"
+    scroll-no-interact: "&cYou can't interact with blocks while teleporting!"
+    scroll-no-item-use: "&cYou can't use items while teleporting!"
+    scroll-no-attack: "&cYou can't attack while teleporting!"
+    scroll-no-jump: "&cYou can't jump while teleporting!"
+    scroll-no-crouch: "&cYou can't crouch while teleporting!"
+    scroll-no-sprint: "&cYou can't sprint while teleporting!"
+    scroll-no-fly: "&cYou can't fly while teleporting!"
+    scroll-no-swim: "&cYou can't swim while teleporting!"
+    scroll-no-climb: "&cYou can't climb while teleporting!"
+    scroll-no-fall: "&cYou can't fall while teleporting!"
+    scroll-no-fall-damage: "&cYou can't take fall damage while teleporting!"
+    scroll-no-fire-damage: "&cYou can't take fire damage while teleporting!"
+    scroll-no-lava-damage: "&cYou can't take lava damage while teleporting!"
+    scroll-no-drowning-damage: "&cYou can't take drowning damage while teleporting!"
+    scroll-no-explosion-damage: "&cYou can't take explosion damage while teleporting!"
+    scroll-no-void-damage: "&cYou can't take void damage while teleporting!"
+    scroll-no-starvation-damage: "&cYou can't take starvation damage while teleporting!"
+    scroll-no-poison-damage: "&cYou can't take poison damage while teleporting!"
+    scroll-no-wither-damage: "&cYou can't take wither damage while teleporting!"
+    scroll-no-lightning-damage: "&cYou can't take lightning damage while teleporting!"
+    scroll-no-thorns-damage: "&cYou can't take thorns damage while teleporting!"
+    scroll-no-magic-damage: "&cYou can't take magic damage while teleporting!"
+    scroll-no-custom-damage: "&cYou can't take custom damage while teleporting!" 

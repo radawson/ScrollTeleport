@@ -1,5 +1,5 @@
 name: ScrollTeleportation
-version: '${version}'
+version: '1.0.0'
 main: org.clockworx.scrollteleportation.ScrollTeleportation
 api-version: '1.21'
 authors: [ClockWorX LLC, Rick Dawson]
@@ -7,9 +7,41 @@ description: A modern RPG-like teleportation system using paperscrolls
 website: https://github.com/radawson/ScrollTeleportation
 
 permissions:
+  # User permissions - Basic functionality for regular players
+  scrollteleportation.user:
+    description: Basic user permissions for ScrollTeleportation
+    default: true
+    children:
+      scrollteleportation.teleport: true
+      scrollteleportation.use: true
+      scrollteleportation.view: true
+
+  # Admin permissions - Full control over the plugin
+  scrollteleportation.admin:
+    description: Administrative permissions for ScrollTeleportation
+    default: op
+    children:
+      scrollteleportation.user: true
+      scrollteleportation.give: true
+      scrollteleportation.walkbypass: true
+      scrollteleportation.invbypass: true
+      scrollteleportation.delaybypass: true
+      scrollteleportation.usesbypass: true
+      scrollteleportation.potioneffectbypass: true
+      scrollteleportation.set: true
+      scrollteleportation.create: true
+      scrollteleportation.reload: true
+
+  # Individual permissions
   scrollteleportation.teleport:
     description: Allows a player to use scrolls
-    default: op
+    default: true
+  scrollteleportation.use:
+    description: Allows a player to use scrolls
+    default: true
+  scrollteleportation.view:
+    description: Allows a player to view scroll information
+    default: true
   scrollteleportation.give:
     description: Allows a player to give scrolls
     default: op

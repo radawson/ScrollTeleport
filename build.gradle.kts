@@ -25,7 +25,7 @@ java {
 tasks {
     // Configure reobfuscation to use Mojang mappings for production
     paperweight {
-        reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+        reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
     }
 
     // Make the reobfJar task run on build
@@ -36,6 +36,7 @@ tasks {
     // Configure shadowJar
     shadowJar {
         archiveClassifier.set("")
+        minimize()
     }
 
     // Configure jar task
@@ -49,10 +50,13 @@ tasks {
                 "Main" to "org.clockworx.scrollteleportation.ScrollTeleportation"
             )
         }
+        from("LICENSE") {
+            rename { "${it}_${project.name}" }
+        }
+        dependsOn("shadowJar")
     }
 
-    // Add dependency between reobfJar and jar
-    reobfJar {
-        dependsOn(jar)
+    clean {
+        delete(layout.buildDirectory)
     }
 } 
