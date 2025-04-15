@@ -21,24 +21,26 @@ public class ScrollTeleportation extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        // Initialize components
-        this.config = new MainConfig(this);
-        this.teleHandler = new TeleportHandler(this);
-        this.scrollStorage = new ScrollStorage(this);
+        
+        // Initialize components with error handling
+        boolean configLoaded = initializeConfig();
+        boolean teleportHandlerInitialized = initializeTeleportHandler();
+        boolean listenersRegistered = registerListeners();
+        boolean commandsRegistered = registerCommands();
 
-        // Load configuration
-        this.config.loadConfiguration();
-        this.scrollStorage.loadScrollsFromConfig();
-
-        // Register listeners
-        registerListeners();
-
-        // Register commands
-        registerCommands();
-
-        // Log startup message
-        getLogger().info("Loaded " + scrollStorage.getLoadedScrolls().size() + " scrolls!");
-        getLogger().info("Scroll Teleportation v" + getDescription().getVersion() + " has been enabled.");
+        // Log startup message with status
+        if (configLoaded && scrollStorage != null) {
+            getLogger().info("Loaded " + scrollStorage.getLoadedScrolls().size() + " scrolls!");
+        } else {
+            getLogger().warning("Some scrolls may not have loaded correctly.");
+        }
+        
+        // Log overall status
+        if (configLoaded && teleportHandlerInitialized && listenersRegistered && commandsRegistered) {
+            getLogger().info("Scroll Teleportation v" + getPluginMeta().getVersion() + " has been enabled successfully.");
+        } else {
+            getLogger().warning("Scroll Teleportation v" + getPluginMeta().getVersion() + " has been enabled with some issues. Check the logs above for details.");
+        }
     }
 
     @Override
@@ -47,17 +49,96 @@ public class ScrollTeleportation extends JavaPlugin {
         getServer().getScheduler().cancelTasks(this);
         
         // Log shutdown message
-        getLogger().info("Scroll Teleportation v" + getDescription().getVersion() + " has been disabled.");
+        getLogger().info("Scroll Teleportation v" + getPluginMeta().getVersion() + " has been disabled.");
     }
 
-    private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new ActivateScrollListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerInvOpenListener(this), this);
+    /**
+     * Initializes the configuration with error handling.
+     * 
+     * @return true if initialization was successful, false otherwise
+     */
+    private boolean initializeConfig() {
+        try {
+            this.config = new MainConfig(this);
+            this.scrollStorage = this.config.getScrollStorage();
+            return true;
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize configuration: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Initializes the teleport handler with error handling.
+     * 
+     * @return true if initialization was successful, false otherwise
+     */
+    private boolean initializeTeleportHandler() {
+        try {
+            this.teleHandler = new TeleportHandler(this);
+            return true;
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize teleport handler: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    private void registerCommands() {
-        getCommand("scroll").setExecutor(new CommandHandler(this));
+    /**
+     * Registers listeners with error handling.
+     * 
+     * @return true if all listeners were registered successfully, false otherwise
+     */
+    private boolean registerListeners() {
+        boolean success = true;
+        
+        try {
+            getServer().getPluginManager().registerEvents(new ActivateScrollListener(this), this);
+        } catch (Exception e) {
+            getLogger().severe("Failed to register ActivateScrollListener: " + e.getMessage());
+            e.printStackTrace();
+            success = false;
+        }
+        
+        try {
+            getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
+        } catch (Exception e) {
+            getLogger().severe("Failed to register PlayerMoveListener: " + e.getMessage());
+            e.printStackTrace();
+            success = false;
+        }
+        
+        try {
+            getServer().getPluginManager().registerEvents(new PlayerInvOpenListener(this), this);
+        } catch (Exception e) {
+            getLogger().severe("Failed to register PlayerInvOpenListener: " + e.getMessage());
+            e.printStackTrace();
+            success = false;
+        }
+        
+        return success;
+    }
+
+    /**
+     * Registers commands with error handling.
+     * 
+     * @return true if commands were registered successfully, false otherwise
+     */
+    private boolean registerCommands() {
+        try {
+            if (getCommand("scrolltp") != null) {
+                getCommand("scrolltp").setExecutor(new CommandHandler(this));
+                return true;
+            } else {
+                getLogger().severe("Failed to register commands: 'scrolltp' command not found in plugin.yml");
+                return false;
+            }
+        } catch (Exception e) {
+            getLogger().severe("Failed to register commands: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static ScrollTeleportation getInstance() {
@@ -82,6 +163,6 @@ public class ScrollTeleportation extends JavaPlugin {
      * @return A string without color codes
      */
     public String fixName(String oldDisplayName) {
-        return oldDisplayName.replaceAll("§[0-9a-fk-or]", "");
+        return oldDisplayName.replace("§", "&");
     }
 } 

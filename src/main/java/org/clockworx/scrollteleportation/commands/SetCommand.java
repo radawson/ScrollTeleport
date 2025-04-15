@@ -37,7 +37,7 @@ public class SetCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 4 && !(args.length == 3 && args[1].equalsIgnoreCase("destination"))) {
             sender.sendMessage(Component.text("Incorrect command usage!", NamedTextColor.RED));
-            sender.sendMessage(Component.text("Usage: /scroll set <variable> <scroll> <result>", NamedTextColor.YELLOW));
+            sender.sendMessage(Component.text("Usage: /scrolltp set <variable> <scroll> <result>", NamedTextColor.YELLOW));
             return true;
         }
 

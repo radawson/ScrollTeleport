@@ -45,13 +45,13 @@ public class HelpCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(header);
         
         // Command list
-        sender.sendMessage(createCommandHelp("/scroll", "Shows basic information"));
-        sender.sendMessage(createCommandHelp("/scroll help", "Shows a list of commands"));
-        sender.sendMessage(createCommandHelp("/scroll reload", "Reload Scroll Teleportation"));
-        sender.sendMessage(createCommandHelp("/scroll give <scroll> (player)", "Give a scroll to a player"));
-        sender.sendMessage(createCommandHelp("/scroll create <scroll> <displayName> <delay> <uses>", 
+        sender.sendMessage(createCommandHelp("/scrolltp", "Shows basic information"));
+        sender.sendMessage(createCommandHelp("/scrolltp help", "Shows a list of commands"));
+        sender.sendMessage(createCommandHelp("/scrolltp reload", "Reload Scroll Teleportation"));
+        sender.sendMessage(createCommandHelp("/scrolltp give <scroll> (player)", "Give a scroll to a player"));
+        sender.sendMessage(createCommandHelp("/scrolltp create <scroll> <displayName> <delay> <uses>", 
                 "Create a new scroll with a <delay>, <uses> and a destination at your location"));
-        sender.sendMessage(createCommandHelp("/scroll set <var> <scroll> <result>", "Set a scroll variable"));
+        sender.sendMessage(createCommandHelp("/scrolltp set <var> <scroll> <result>", "Set a scroll variable"));
         
         // Page indicator
         sender.sendMessage(Component.text("Page ", NamedTextColor.GOLD)

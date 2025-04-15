@@ -1,5 +1,5 @@
 name: ScrollTeleportation
-version: '1.0.1'
+version: '1.0.4'
 main: org.clockworx.scrollteleportation.ScrollTeleportation
 api-version: '1.21'
 authors: [ClockWorX LLC, Rick Dawson]
@@ -71,7 +71,7 @@ permissions:
     default: op          
 
 commands:
-  scroll:
+  scrolltp:
     description: Main command for Scroll Teleportation
     usage: /<command> [subcommand]
-    aliases: [st, scrollteleportation, scrolls] 
+    aliases: [stp, scrollteleport] 

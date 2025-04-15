@@ -55,6 +55,9 @@ general:
   # Whether to cancel teleportation when player takes custom damage
   cancel-on-custom-damage: true
 
+# Messages file location
+messages-file: "messages.yml"
+
 # Scroll Settings
 scrolls:
   # Default scroll settings
@@ -118,46 +121,4 @@ scrolls:
     cancel-on-move: true
     uses: 5
     effects:
-      - "CONFUSION 10"
-
-# Messages
-messages:
-  prefix: "&8[&bScrollTeleport&8]"
-  teleport-started: "&aTeleportation started! Don't move..."
-  teleport-cancelled: "&cTeleportation cancelled!"
-  teleport-completed: "&aTeleportation completed!"
-  teleport-failed: "&cTeleportation failed!"
-  scroll-given: "&aYou have been given a scroll!"
-  scroll-received: "&aYou received a scroll from %player%!"
-  scroll-created: "&aScroll created successfully!"
-  scroll-used: "&aScroll used! %uses% uses remaining."
-  scroll-consumed: "&cScroll consumed!"
-  scroll-invalid: "&cInvalid scroll!"
-  scroll-no-permission: "&cYou don't have permission to use this scroll!"
-  scroll-no-uses: "&cThis scroll has no uses remaining!"
-  scroll-no-delay: "&cYou must wait %delay% seconds before using another scroll!"
-  scroll-no-walk: "&cYou can't walk while teleporting!"
-  scroll-no-inventory: "&cYou can't open your inventory while teleporting!"
-  scroll-no-interact: "&cYou can't interact with blocks while teleporting!"
-  scroll-no-item-use: "&cYou can't use items while teleporting!"
-  scroll-no-attack: "&cYou can't attack while teleporting!"
-  scroll-no-jump: "&cYou can't jump while teleporting!"
-  scroll-no-crouch: "&cYou can't crouch while teleporting!"
-  scroll-no-sprint: "&cYou can't sprint while teleporting!"
-  scroll-no-fly: "&cYou can't fly while teleporting!"
-  scroll-no-swim: "&cYou can't swim while teleporting!"
-  scroll-no-climb: "&cYou can't climb while teleporting!"
-  scroll-no-fall: "&cYou can't fall while teleporting!"
-  scroll-no-fall-damage: "&cYou can't take fall damage while teleporting!"
-  scroll-no-fire-damage: "&cYou can't take fire damage while teleporting!"
-  scroll-no-lava-damage: "&cYou can't take lava damage while teleporting!"
-  scroll-no-drowning-damage: "&cYou can't take drowning damage while teleporting!"
-  scroll-no-explosion-damage: "&cYou can't take explosion damage while teleporting!"
-  scroll-no-void-damage: "&cYou can't take void damage while teleporting!"
-  scroll-no-starvation-damage: "&cYou can't take starvation damage while teleporting!"
-  scroll-no-poison-damage: "&cYou can't take poison damage while teleporting!"
-  scroll-no-wither-damage: "&cYou can't take wither damage while teleporting!"
-  scroll-no-lightning-damage: "&cYou can't take lightning damage while teleporting!"
-  scroll-no-thorns-damage: "&cYou can't take thorns damage while teleporting!"
-  scroll-no-magic-damage: "&cYou can't take magic damage while teleporting!"
-  scroll-no-custom-damage: "&cYou can't take custom damage while teleporting!" 
+      - "CONFUSION 10" 

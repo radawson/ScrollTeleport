@@ -31,7 +31,7 @@ public class GiveCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 2) {
             sender.sendMessage(Component.text("Incorrect command usage!", NamedTextColor.RED));
-            sender.sendMessage(Component.text("Usage: /scroll give <scroll> (name)", NamedTextColor.YELLOW));
+            sender.sendMessage(Component.text("Usage: /scrolltp give <scroll> (name)", NamedTextColor.YELLOW));
             return true;
         }
 
@@ -60,7 +60,7 @@ public class GiveCommand implements CommandExecutor, TabCompleter {
             }
         } else {
             sender.sendMessage(Component.text("Incorrect command usage!", NamedTextColor.RED));
-            sender.sendMessage(Component.text("Usage: /scroll give <scroll> (name)", NamedTextColor.YELLOW));
+            sender.sendMessage(Component.text("Usage: /scrolltp give <scroll> (name)", NamedTextColor.YELLOW));
             return true;
         }
 

@@ -35,7 +35,8 @@ public class MainConfig {
     private FileConfiguration config;
     private File configFile;
     private final Map<String, String> messages;
-    private final ScrollStorage scrollStorage;
+    private ScrollStorage scrollStorage;
+    private MessagesConfig messagesConfig;
 
     /**
      * Creates a new MainConfig instance.
@@ -45,26 +46,61 @@ public class MainConfig {
     public MainConfig(Plugin plugin) {
         this.plugin = (ScrollTeleportation) plugin;
         this.messages = new HashMap<>();
-        this.scrollStorage = new ScrollStorage(this.plugin);
         loadConfig();
     }
 
     /**
      * Loads the configuration from file.
+     * 
+     * @return true if loading was successful, false otherwise
      */
-    public void loadConfig() {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
-        }
+    public boolean loadConfig() {
+        try {
+            if (!plugin.getDataFolder().exists()) {
+                plugin.getDataFolder().mkdir();
+            }
 
-        configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.exists()) {
-            plugin.saveResource("config.yml", false);
-        }
+            // Load main config
+            configFile = new File(plugin.getDataFolder(), "config.yml");
+            if (!configFile.exists()) {
+                plugin.saveResource("config.yml", false);
+            }
+            config = YamlConfiguration.loadConfiguration(configFile);
 
-        config = YamlConfiguration.loadConfiguration(configFile);
-        loadMessages();
-        scrollStorage.loadScrollsFromConfig();
+            // Initialize messages config
+            try {
+                if (messagesConfig == null) {
+                    messagesConfig = new MessagesConfig(plugin);
+                } else {
+                    messagesConfig.reloadConfig();
+                }
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to load messages config: " + e.getMessage());
+                // Continue loading even if messages fail
+            }
+
+            // Initialize scroll storage after config is loaded
+            try {
+                if (scrollStorage == null) {
+                    scrollStorage = new ScrollStorage(plugin);
+                }
+                
+                // Set the MainConfig instance in ScrollStorage
+                scrollStorage.setMainConfig(this);
+                
+                // Load scrolls from config
+                scrollStorage.loadScrollsFromConfig();
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to load scrolls: " + e.getMessage());
+                // Continue loading even if scrolls fail
+            }
+            
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to load configuration: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -98,6 +134,15 @@ public class MainConfig {
      * Loads messages from the configuration.
      */
     private void loadMessages() {
+        // Check if we should use the messages.yml file
+        String messagesFile = config.getString("messages-file");
+        if (messagesFile != null && !messagesFile.isEmpty()) {
+            // Use the messages from the MessagesConfig
+            messages.putAll(messagesConfig.getMessages());
+            return;
+        }
+
+        // Fallback to the old method of loading messages from config.yml
         ConfigurationSection messagesSection = config.getConfigurationSection("messages");
         if (messagesSection == null) {
             plugin.getLogger().warning("No messages section found in config.yml");
@@ -110,17 +155,52 @@ public class MainConfig {
     }
 
     /**
-     * Gets a message from the configuration.
+     * Gets a message by its key.
      *
      * @param key The message key
-     * @return The message as a Component
+     * @return The message, or the key if the message is not found
      */
-    public Component getMessage(String key) {
-        String message = messages.get(key);
-        if (message == null) {
-            return Component.text("Message not found: " + key, NamedTextColor.RED);
+    public String getMessage(String key) {
+        // First try to get the message from the MessagesConfig
+        if (messagesConfig != null) {
+            return messagesConfig.getMessage(key);
         }
-        return Component.text(message, NamedTextColor.WHITE);
+        
+        // Fallback to the old method
+        return messages.getOrDefault(key, key);
+    }
+
+    /**
+     * Gets a message by its key with the prefix.
+     *
+     * @param key The message key
+     * @return The message with prefix, or the key if the message is not found
+     */
+    public String getMessageWithPrefix(String key) {
+        // First try to get the message from the MessagesConfig
+        if (messagesConfig != null) {
+            return messagesConfig.getMessageWithPrefix(key);
+        }
+        
+        // Fallback to the old method
+        String prefix = getMessage("prefix");
+        String message = getMessage(key);
+        return prefix + " " + message;
+    }
+
+    /**
+     * Gets the prefix message.
+     *
+     * @return The prefix message
+     */
+    public String getPrefix() {
+        // First try to get the prefix from the MessagesConfig
+        if (messagesConfig != null) {
+            return messagesConfig.getPrefix();
+        }
+        
+        // Fallback to the old method
+        return getMessage("prefix");
     }
 
     /**
@@ -149,25 +229,26 @@ public class MainConfig {
      * Sets the default configuration values.
      */
     private void setDefaults() {
-        config.options().header("""
-            Scroll Teleportation Configuration
-            
-            Scroll Configuration:
-            - name: The display name of the scroll (must be unique)
-            - lores: List of lore lines (use '' for blank line)
-            - destination: Where the scroll teleports to
-            - destination_hidden: Whether to show 'unknown' as destination
-            - delay: Time in seconds before teleportation
-            - cancel_on_move: Whether to cancel teleport if player moves
-            - uses: Number of uses (-1 for infinite)
-            - effects: List of potion effects (format: EFFECT_NAME DURATION)
-            
-            Destination Types:
-            1. Fixed point: 'world,x,y,z'
-            2. Random point: 'random world' or 'random' for any world
-            3. Random radius: 'random_radius(point=world,x,y,z radius=1000)'
-            4. Named location: 'spawn world'
-            """);
+        // Set header using the recommended approach
+        config.options().setHeader(Arrays.asList(
+            "Scroll Teleportation Configuration",
+            "",
+            "Scroll Configuration:",
+            "- name: The display name of the scroll (must be unique)",
+            "- lores: List of lore lines (use '' for blank line)",
+            "- destination: Where the scroll teleports to",
+            "- destination_hidden: Whether to show 'unknown' as destination",
+            "- delay: Time in seconds before teleportation",
+            "- cancel_on_move: Whether to cancel teleport if player moves",
+            "- uses: Number of uses (-1 for infinite)",
+            "- effects: List of potion effects (format: EFFECT_NAME DURATION)",
+            "",
+            "Destination Types:",
+            "1. Fixed point: 'world,x,y,z'",
+            "2. Random point: 'random world' or 'random' for any world",
+            "3. Random radius: 'random_radius(point=world,x,y,z radius=1000)'",
+            "4. Named location: 'spawn world'"
+        ));
 
         // Set defaults for scroll material
         config.addDefault("Scroll.material", Material.PAPER.name());
@@ -330,8 +411,10 @@ public class MainConfig {
                 continue;
             }
 
-            PotionEffectType effectType = PotionEffectType.getByName(effectName.toUpperCase());
-            if (effectType == null) {
+            PotionEffectType effectType = null;
+            try {
+                effectType = org.bukkit.Registry.POTION_EFFECT_TYPE.get(org.bukkit.NamespacedKey.minecraft(effectName.toLowerCase()));
+            } catch (Exception e) {
                 plugin.getLogger().warning("Invalid effect type " + effectName + " in scroll " + scroll);
                 continue;
             }
@@ -459,7 +542,36 @@ public class MainConfig {
      * @return The set of scroll internal names
      */
     public Set<String> getScrollsInConfig() {
-        return config.getConfigurationSection("Scrolls").getKeys(false);
+        // First try the uppercase "Scrolls" section
+        ConfigurationSection scrollsSection = config.getConfigurationSection("Scrolls");
+        
+        // If not found, try the lowercase "scrolls" section
+        if (scrollsSection == null) {
+            scrollsSection = config.getConfigurationSection("scrolls");
+            
+            // If still not found, create a default section
+            if (scrollsSection == null) {
+                plugin.getLogger().warning("No 'Scrolls' or 'scrolls' section found in config.yml. Creating default scrolls section.");
+                config.createSection("Scrolls");
+                // Add a default scroll if none exist
+                config.set("Scrolls.spawn_scroll.name", "&6Scroll of Spawn");
+                config.set("Scrolls.spawn_scroll.lores", Arrays.asList(
+                    "&7Teleports you to spawn",
+                    "",
+                    "&7Common scroll"
+                ));
+                config.set("Scrolls.spawn_scroll.destination", "spawn world");
+                config.set("Scrolls.spawn_scroll.destination_hidden", false);
+                config.set("Scrolls.spawn_scroll.delay", 3);
+                config.set("Scrolls.spawn_scroll.cancel_on_move", true);
+                config.set("Scrolls.spawn_scroll.uses", 1);
+                config.set("Scrolls.spawn_scroll.effects", Arrays.asList("BLINDNESS 3"));
+                saveConfig();
+                return new HashSet<>(Arrays.asList("spawn_scroll"));
+            }
+        }
+        
+        return scrollsSection.getKeys(false);
     }
 
     /**

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.Set;
 
 /**
  * Manages the storage and retrieval of scrolls in the plugin.
@@ -23,6 +24,7 @@ public class ScrollStorage {
 
     private final ScrollTeleportation plugin;
     private final List<Scroll> loadedScrolls = new ArrayList<>();
+    private MainConfig mainConfig;
 
     /**
      * Creates a new ScrollStorage instance.
@@ -31,6 +33,15 @@ public class ScrollStorage {
      */
     public ScrollStorage(ScrollTeleportation plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Sets the MainConfig instance.
+     * 
+     * @param mainConfig The MainConfig instance
+     */
+    public void setMainConfig(MainConfig mainConfig) {
+        this.mainConfig = mainConfig;
     }
 
     /**
@@ -50,13 +61,12 @@ public class ScrollStorage {
     }
 
     /**
-     * Removes a scroll by its name.
+     * Removes a scroll from the loaded scrolls list.
      * 
      * @param scrollName The name of the scroll to remove
      */
     public void removeLoadedScroll(String scrollName) {
-        loadedScrolls.removeIf(scroll -> scroll.getInternalName().equalsIgnoreCase(scrollName) 
-            || scroll.getDisplayName().equalsIgnoreCase(scrollName));
+        loadedScrolls.removeIf(scroll -> scroll.getInternalName().equals(scrollName));
     }
 
     /**
@@ -67,66 +77,77 @@ public class ScrollStorage {
      */
     public Optional<Scroll> getLoadedScroll(String scrollName) {
         return loadedScrolls.stream()
-            .filter(scroll -> scroll.getInternalName().equalsIgnoreCase(scrollName) 
-                || scroll.getDisplayName().equalsIgnoreCase(scrollName))
-            .findFirst();
+                .filter(scroll -> scroll.getInternalName().equals(scrollName))
+                .findFirst();
     }
 
     /**
      * Gets all loaded scrolls.
      * 
-     * @return The list of loaded scrolls
+     * @return A list of all loaded scrolls
      */
     public List<Scroll> getLoadedScrolls() {
         return new ArrayList<>(loadedScrolls);
     }
 
     /**
-     * Gets the names of all loaded scrolls.
+     * Gets a list of all scroll names.
      * 
-     * @return The list of scroll names
+     * @return A list of scroll names
      */
     public List<String> getScrollNames() {
-        List<String> names = new ArrayList<>();
-        for (Scroll scroll : loadedScrolls) {
-            names.add(scroll.getDisplayName());
-        }
-        return names;
+        return loadedScrolls.stream()
+                .map(Scroll::getInternalName)
+                .toList();
     }
 
     /**
-     * Loads all scrolls from the config.
+     * Loads scrolls from the configuration.
      * 
-     * @return true if scrolls were loaded successfully
+     * @return true if loading was successful, false otherwise
      */
     public boolean loadScrollsFromConfig() {
-        // First clear all scrolls
-        loadedScrolls.clear();
-
-        MainConfig mainConfig = plugin.getMainConfig();
-
-        // Go over each entry in the config and load the scroll in memory
-        for (String internalScrollName : mainConfig.getScrollsInConfig()) {
-            try {
-                Scroll scroll = new Scroll(internalScrollName);
-
-                scroll.setDisplayName(mainConfig.getScrollDisplayName(internalScrollName));
-                scroll.setDescriptionLore(mainConfig.getLoreStrings(internalScrollName));
-                scroll.setCancelOnMove(mainConfig.doCancelOnMove(internalScrollName));
-                scroll.setDestinationHidden(mainConfig.isDestinationHidden(internalScrollName));
-                scroll.setEffects(mainConfig.getEffects(internalScrollName));
-                scroll.setTeleportDelay(mainConfig.getDelay(internalScrollName));
-                scroll.setUses(mainConfig.getTotalUses(internalScrollName));
-                scroll.setDestination(mainConfig.getScrollDestination(internalScrollName));
-                scroll.setMaterial(mainConfig.getScrollMaterial());
-
-                loadedScrolls.add(scroll);
-            } catch (ScrollInvalidException e) {
-                plugin.getLogger().log(Level.SEVERE, "Failed to load scroll: " + internalScrollName, e);
-            }
+        if (mainConfig == null) {
+            plugin.getLogger().severe("Cannot load scrolls: MainConfig is null");
+            return false;
         }
-
-        return true;
+        
+        try {
+            // Clear existing scrolls
+            loadedScrolls.clear();
+            
+            // Get all scrolls from config
+            Set<String> scrollNames = mainConfig.getScrollsInConfig();
+            
+            if (scrollNames.isEmpty()) {
+                plugin.getLogger().warning("No scrolls found in configuration");
+                return true; // Return true as this is not a critical error
+            }
+            
+            boolean allSuccessful = true;
+            
+            // Load each scroll
+            for (String scrollName : scrollNames) {
+                try {
+                    Scroll scroll = loadScroll(scrollName);
+                    if (scroll != null) {
+                        addLoadedScroll(scroll);
+                    } else {
+                        plugin.getLogger().warning("Failed to load scroll: " + scrollName);
+                        allSuccessful = false;
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Error loading scroll " + scrollName + ": " + e.getMessage());
+                    allSuccessful = false;
+                }
+            }
+            
+            return allSuccessful;
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to load scrolls from config: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -156,5 +177,32 @@ public class ScrollStorage {
             .get(key, PersistentDataType.STRING);
 
         return this.getLoadedScroll(internalScrollName);
+    }
+
+    /**
+     * Loads a single scroll from the configuration.
+     * 
+     * @param scrollName The name of the scroll to load
+     * @return The loaded scroll, or null if loading failed
+     */
+    private Scroll loadScroll(String scrollName) {
+        try {
+            Scroll scroll = new Scroll(scrollName);
+            
+            scroll.setDisplayName(mainConfig.getScrollDisplayName(scrollName));
+            scroll.setDescriptionLore(mainConfig.getLoreStrings(scrollName));
+            scroll.setCancelOnMove(mainConfig.doCancelOnMove(scrollName));
+            scroll.setDestinationHidden(mainConfig.isDestinationHidden(scrollName));
+            scroll.setEffects(mainConfig.getEffects(scrollName));
+            scroll.setTeleportDelay(mainConfig.getDelay(scrollName));
+            scroll.setUses(mainConfig.getTotalUses(scrollName));
+            scroll.setDestination(mainConfig.getScrollDestination(scrollName));
+            scroll.setMaterial(mainConfig.getScrollMaterial());
+            
+            return scroll;
+        } catch (Exception e) {
+            plugin.getLogger().warning("Error creating scroll " + scrollName + ": " + e.getMessage());
+            return null;
+        }
     }
 } 

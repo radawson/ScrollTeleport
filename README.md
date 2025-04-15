@@ -36,11 +36,11 @@ A modern Minecraft plugin that allows players to use scrolls for teleportation w
 
 ## Commands
 
-- `/scroll help` - Shows help information
-- `/scroll reload` - Reloads the plugin configuration
-- `/scroll give <scroll> [player]` - Gives a scroll to a player
-- `/scroll create <name> <displayName> <delay> <uses>` - Creates a new scroll
-- `/scroll set <var> <scroll> <result>` - Sets a scroll variable
+- `/scrolltp help` - Shows help information
+- `/scrolltp reload` - Reloads the plugin configuration
+- `/scrolltp give <scroll> [player]` - Gives a scroll to a player
+- `/scrolltp create <name> <displayName> <delay> <uses>` - Creates a new scroll
+- `/scrolltp set <var> <scroll> <result>` - Sets a scroll variable
 
 ## Permissions
 

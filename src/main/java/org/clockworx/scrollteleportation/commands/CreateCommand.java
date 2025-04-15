@@ -33,7 +33,7 @@ public class CreateCommand implements CommandExecutor, TabCompleter {
 
         if (args.length != 5) {
             sender.sendMessage(Component.text("Invalid command usage!", NamedTextColor.RED));
-            sender.sendMessage(Component.text("Usage: /scroll create <name> <displayName> <delay> <uses>", NamedTextColor.YELLOW));
+            sender.sendMessage(Component.text("Usage: /scrolltp create <name> <displayName> <delay> <uses>", NamedTextColor.YELLOW));
             return true;
         }
 

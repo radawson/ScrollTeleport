@@ -1,0 +1,131 @@
+# ScrollTeleportation Messages Configuration
+# This file contains all messages used by the plugin.
+# Messages are organized by language code (e.g., 'en' for English).
+# Only the 'en' section is required, other languages are optional.
+
+en:
+  # General messages
+  prefix: "&8[&6ScrollTeleport&8]"
+  reload: "&aConfiguration reloaded successfully!"
+  no-permission: "&cYou don't have permission to use this command!"
+  
+  # Scroll usage messages
+  scroll-activated: "&aYou have activated a teleportation scroll!"
+  scroll-cancelled: "&cTeleportation cancelled!"
+  scroll-cancelled-move: "&cTeleportation cancelled because you moved!"
+  scroll-cancelled-damage: "&cTeleportation cancelled because you took damage!"
+  scroll-cancelled-combat: "&cTeleportation cancelled because you are in combat!"
+  scroll-cancelled-world: "&cTeleportation cancelled because the destination world is blocked!"
+  scroll-cancelled-region: "&cTeleportation cancelled because the destination region is blocked!"
+  scroll-teleporting: "&aTeleporting in &e%delay% &aseconds..."
+  scroll-teleported: "&aTeleportation complete!"
+  scroll-destination: "&7Destination: &e%destination%"
+  scroll-destination-hidden: "&7Destination: &eUnknown"
+  scroll-uses-left: "&7Uses left: &e%uses%"
+  scroll-infinite-uses: "&7Uses: &eInfinite"
+  
+  # Command messages
+  command-help: |
+    &6=== ScrollTeleport Commands ===
+    &e/scrolltp give <player> <scroll> &7- Give a scroll to a player
+    &e/scrolltp reload &7- Reload the configuration
+    &e/scrolltp list &7- List all available scrolls
+  
+  # Error messages
+  error-invalid-scroll: "&cInvalid scroll name: %scroll%"
+  error-invalid-player: "&cPlayer not found: %player%"
+  error-invalid-command: "&cInvalid command. Use /scrolltp help for help."
+  error-no-scrolls: "&cNo scrolls are configured!"
+  error-scroll-not-found: "&cScroll not found: %scroll%"
+  error-player-not-found: "&cPlayer not found: %player%"
+  error-invalid-destination: "&cInvalid destination: %destination%"
+  error-world-blocked: "&cTeleportation to world %world% is blocked!"
+  error-region-blocked: "&cTeleportation to this region is blocked!"
+  error-combat-blocked: "&cYou cannot teleport while in combat!"
+  error-load-chunk: "&cFailed to load destination chunk!"
+  error-teleport: "&cFailed to teleport to destination!"
+
+eo:
+  # General messages
+  prefix: "&8[&6ScrollTeleport&8]"
+  reload: "&aKonfiguracio sukcese reŝargita!"
+  no-permission: "&cVi ne havas permeson uzi ĉi tiun komandon!"
+  
+  # Scroll usage messages
+  scroll-activated: "&aVi aktivigis teleportan skribrulaĵon!"
+  scroll-cancelled: "&cTeleporto nuligita!"
+  scroll-cancelled-move: "&cTeleporto nuligita ĉar vi moviĝis!"
+  scroll-cancelled-damage: "&cTeleporto nuligita ĉar vi ricevis damaĝon!"
+  scroll-cancelled-combat: "&cTeleporto nuligita ĉar vi estas en batalo!"
+  scroll-cancelled-world: "&cTeleporto nuligita ĉar la celloko estas blokita!"
+  scroll-cancelled-region: "&cTeleporto nuligita ĉar la celloko estas blokita!"
+  scroll-teleporting: "&aTeleportado en &e%delay% &asekundoj..."
+  scroll-teleported: "&aTeleportado kompletita!"
+  scroll-destination: "&7Celloko: &e%destination%"
+  scroll-destination-hidden: "&7Celloko: &eNekonata"
+  scroll-uses-left: "&7Restantaj uzoj: &e%uses%"
+  scroll-infinite-uses: "&7Uzoj: &eSenfinaj"
+  
+  # Command messages
+  command-help: |
+    &6=== ScrollTeleport Komandoj ===
+    &e/scrolltp give <ludanto> <skribrulaĵo> &7- Donu skribrulaĵon al ludanto
+    &e/scrolltp reload &7- Reŝargi la konfiguracion
+    &e/scrolltp list &7- Listi ĉiujn haveblajn skribrulaĵojn
+  
+  # Error messages
+  error-invalid-scroll: "&cNevalida skribrulaĵa nomo: %scroll%"
+  error-invalid-player: "&cLudanto ne trovita: %player%"
+  error-invalid-command: "&cNevalida komando. Uzu /scrolltp help por helpo."
+  error-no-scrolls: "&cNeniu skribrulaĵo estas konfigurita!"
+  error-scroll-not-found: "&cSkribrulaĵo ne trovita: %scroll%"
+  error-player-not-found: "&cLudanto ne trovita: %player%"
+  error-invalid-destination: "&cNevalida celloko: %destination%"
+  error-world-blocked: "&cTeleportado al mondo %world% estas blokita!"
+  error-region-blocked: "&cTeleportado al ĉi tiu regiono estas blokita!"
+  error-combat-blocked: "&cVi ne povas teleporti dum batalo!"
+  error-load-chunk: "&cMalsukcesis ŝargi cellokan ĉunkon!"
+  error-teleport: "&cMalsukcesis teleporti al celloko!"
+
+es:
+  # General messages
+  prefix: "&8[&6ScrollTeleport&8]"
+  reload: "&a¡Configuración recargada con éxito!"
+  no-permission: "&cNo tienes permiso para usar este comando!"
+  
+  # Scroll usage messages
+  scroll-activated: "&a¡Has activado un pergamino de teletransporte!"
+  scroll-cancelled: "&c¡Teletransporte cancelado!"
+  scroll-cancelled-move: "&c¡Teletransporte cancelado porque te moviste!"
+  scroll-cancelled-damage: "&c¡Teletransporte cancelado porque recibiste daño!"
+  scroll-cancelled-combat: "&c¡Teletransporte cancelado porque estás en combate!"
+  scroll-cancelled-world: "&c¡Teletransporte cancelado porque el mundo de destino está bloqueado!"
+  scroll-cancelled-region: "&c¡Teletransporte cancelado porque la región de destino está bloqueada!"
+  scroll-teleporting: "&aTeletransportando en &e%delay% &asegundos..."
+  scroll-teleported: "&a¡Teletransporte completado!"
+  scroll-destination: "&7Destino: &e%destination%"
+  scroll-destination-hidden: "&7Destino: &eDesconocido"
+  scroll-uses-left: "&7Usos restantes: &e%uses%"
+  scroll-infinite-uses: "&7Usos: &eInfinitos"
+  
+  # Command messages
+  command-help: |
+    &6=== Comandos de ScrollTeleport ===
+    &e/scrolltp give <jugador> <pergamino> &7- Dar un pergamino a un jugador
+    &e/scrolltp reload &7- Recargar la configuración
+    &e/scrolltp list &7- Listar todos los pergaminos disponibles
+  
+  # Error messages
+  error-invalid-scroll: "&cNombre de pergamino inválido: %scroll%"
+  error-invalid-player: "&cJugador no encontrado: %player%"
+  error-invalid-command: "&cComando inválido. Usa /scrolltp help para ayuda."
+  error-no-scrolls: "&c¡No hay pergaminos configurados!"
+  error-scroll-not-found: "&cPergamino no encontrado: %scroll%"
+  error-player-not-found: "&cJugador no encontrado: %player%"
+  error-invalid-destination: "&cDestino inválido: %destination%"
+  error-world-blocked: "&c¡El teletransporte al mundo %world% está bloqueado!"
+  error-region-blocked: "&c¡El teletransporte a esta región está bloqueado!"
+  error-combat-blocked: "&c¡No puedes teletransportarte mientras estás en combate!"
+  error-load-chunk: "&c¡Error al cargar el chunk de destino!"
+  error-teleport: "&c¡Error al teletransportarse al destino!"
+  
