@@ -17,7 +17,19 @@ public enum LanguageString {
     NOT_ALLOWED_TO_USE_SCROLL("not allowed to use scroll", "<red>You are not allowed to use scrolls.</red>"),
     CANCELLED_DUE_TO_MOVEMENT("cancelled due to movement", "<red>Teleportation is cancelled because you moved.</red>"),
     CANCELLED_DUE_TO_INTERACTION("cancelled due to interaction", "<red>Teleportation is cancelled because you interacted.</red>"),
-    POTION_EFFECTS_APPLIED("potions effects applied", "<gold>You feel strange effects as you've been teleported..</gold>");
+    POTION_EFFECTS_APPLIED("potions effects applied", "<gold>You feel strange effects as you've been teleported..</gold>"),
+    TELEPORT_CANCELLED_MOVEMENT("teleport cancelled movement", "<red>Teleportation cancelled due to movement!</red>"),
+    NO_PERMISSION("no permission", "<red>You don't have permission to use this command.</red>"),
+    INVALID_COMMAND("invalid command", "<red>Invalid command. Use /scroll help for help.</red>"),
+    HELP_HEADER("help header", "<gold>=== Scroll Teleportation Help ==="),
+    HELP_RELOAD("help reload", "<gold>/scroll reload <gray>- Reload the plugin configuration</gray>"),
+    HELP_GIVE("help give", "<gold>/scroll give <player> <scroll> [amount] <gray>- Give a scroll to a player</gray>"),
+    RELOAD_SUCCESS("reload success", "<green>Configuration reloaded successfully!</green>"),
+    RELOAD_FAILED("reload failed", "<red>Failed to reload configuration!</red>"),
+    PLAYER_NOT_FOUND("player not found", "<red>Player not found!</red>"),
+    INVALID_AMOUNT("invalid amount", "<red>Invalid amount!</red>"),
+    GIVE_SUCCESS("give success", "<green>Successfully gave %amount% %scroll% to %player%!</green>"),
+    SCROLL_NOT_FOUND("scroll not found", "<red>Scroll not found!</red>");
 
     private final String configPath;
     private final String defaultString;
@@ -60,5 +72,14 @@ public enum LanguageString {
      */
     public static Component parseComponent(String string) {
         return miniMessage.deserialize(string);
+    }
+
+    /**
+     * Parses this language string's default value as a Component.
+     * 
+     * @return The parsed Component
+     */
+    public Component parse() {
+        return parseComponent(defaultString);
     }
 } 

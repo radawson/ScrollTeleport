@@ -4,6 +4,10 @@ build/
 gradle-app.setting
 !gradle-wrapper.jar
 .gradletasknamecache
+gradlew
+gradlew.bat
+gradle/wrapper/
+gradle-wrapper.properties
 
 # Compiled class files
 *.class

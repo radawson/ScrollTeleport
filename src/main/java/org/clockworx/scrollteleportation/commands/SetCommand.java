@@ -9,9 +9,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.clockworx.scrollteleportation.exceptions.ScrollInvalidException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,60 +55,76 @@ public class SetCommand implements CommandExecutor, TabCompleter {
         }
         String result = String.join(" ", resultList);
 
-        switch (variable.toLowerCase()) {
-            case "name" -> {
-                plugin.getMainConfig().setName(scroll.getInternalName(), result);
-                sender.sendMessage(createSuccessMessage("name", scroll.getInternalName(), result));
-                return true;
-            }
-            case "delay" -> {
-                try {
-                    int delay = Integer.parseInt(result);
+        try {
+            switch (variable.toLowerCase()) {
+                case "name" -> {
+                    plugin.getMainConfig().setName(scroll.getInternalName(), result);
+                    sender.sendMessage(createSuccessMessage("name", scroll.getInternalName(), result));
+                }
+                case "delay" -> {
+                    int delay;
+                    try {
+                        delay = Integer.parseInt(result);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(Component.text("Invalid delay value: " + result, NamedTextColor.RED));
+                        return true;
+                    }
+
+                    if (delay < 0) {
+                        sender.sendMessage(Component.text("Delay cannot be negative", NamedTextColor.RED));
+                        return true;
+                    }
+
                     plugin.getMainConfig().setDelay(scroll.getInternalName(), delay);
                     sender.sendMessage(createSuccessMessage("delay", scroll.getInternalName(), result + " seconds"));
-                    return true;
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(Component.text("Delay number is not a valid number!", NamedTextColor.RED));
-                    return true;
                 }
-            }
-            case "uses" -> {
-                try {
-                    int uses = Integer.parseInt(result);
+                case "uses" -> {
+                    int uses;
+                    try {
+                        uses = Integer.parseInt(result);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(Component.text("Invalid uses value: " + result, NamedTextColor.RED));
+                        return true;
+                    }
+
+                    if (uses < -1) {
+                        sender.sendMessage(Component.text("Uses cannot be less than -1", NamedTextColor.RED));
+                        return true;
+                    }
+
                     plugin.getMainConfig().setUses(scroll.getInternalName(), uses);
                     sender.sendMessage(createSuccessMessage("uses", scroll.getInternalName(), result));
-                    return true;
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(Component.text("Use number is not a valid number!", NamedTextColor.RED));
-                    return true;
+                }
+                case "destination_hidden" -> {
+                    boolean value = Boolean.parseBoolean(result);
+                    plugin.getMainConfig().setDestinationHidden(scroll.getInternalName(), value);
+                    sender.sendMessage(createSuccessMessage("destination_hidden", scroll.getInternalName(), String.valueOf(value)));
+                }
+                case "cancel_on_move" -> {
+                    boolean value = Boolean.parseBoolean(result);
+                    plugin.getMainConfig().setCancelOnMove(scroll.getInternalName(), value);
+                    sender.sendMessage(createSuccessMessage("cancel_on_move", scroll.getInternalName(), String.valueOf(value)));
+                }
+                case "destination" -> {
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(Component.text("Cannot get your location!", NamedTextColor.RED));
+                        return true;
+                    }
+                    plugin.getMainConfig().setDestination(scroll.getInternalName(), player.getLocation());
+                    sender.sendMessage(createSuccessMessage("destination", scroll.getInternalName(), "your location"));
+                }
+                default -> {
+                    sender.sendMessage(Component.text("I don't recognise '" + variable + "' as a variable!", NamedTextColor.RED));
+                    sender.sendMessage(Component.text("You can only use: " + String.join(", ", VALID_VARIABLES), NamedTextColor.YELLOW));
                 }
             }
-            case "destination_hidden" -> {
-                boolean value = Boolean.parseBoolean(result);
-                plugin.getMainConfig().setDestinationHidden(scroll.getInternalName(), value);
-                sender.sendMessage(createSuccessMessage("destination_hidden", scroll.getInternalName(), String.valueOf(value)));
-                return true;
-            }
-            case "cancel_on_move" -> {
-                boolean value = Boolean.parseBoolean(result);
-                plugin.getMainConfig().setCancelOnMove(scroll.getInternalName(), value);
-                sender.sendMessage(createSuccessMessage("cancel_on_move", scroll.getInternalName(), String.valueOf(value)));
-                return true;
-            }
-            case "destination" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage(Component.text("Cannot get your location!", NamedTextColor.RED));
-                    return true;
-                }
-                plugin.getMainConfig().setDestination(scroll.getInternalName(), player.getLocation());
-                sender.sendMessage(createSuccessMessage("destination", scroll.getInternalName(), "your location"));
-                return true;
-            }
-            default -> {
-                sender.sendMessage(Component.text("I don't recognise '" + variable + "' as a variable!", NamedTextColor.RED));
-                sender.sendMessage(Component.text("You can only use: " + String.join(", ", VALID_VARIABLES), NamedTextColor.YELLOW));
-                return true;
-            }
+
+            // Reload the scroll to apply changes
+            plugin.getScrollStorage().loadScrollsFromConfig();
+            return true;
+        } catch (ScrollInvalidException e) {
+            sender.sendMessage(Component.text("Error updating scroll: " + e.getMessage(), NamedTextColor.RED));
+            return true;
         }
     }
 

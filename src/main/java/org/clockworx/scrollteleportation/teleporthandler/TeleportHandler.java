@@ -24,7 +24,7 @@ import java.util.logging.Level;
 public class TeleportHandler {
 
     private final ScrollTeleportation plugin;
-    private final Map<UUID, Integer> taskIds;
+    private final Map<UUID, Integer> taskIDs;
     private final Map<UUID, Boolean> readyPlayers;
 
     /**
@@ -34,7 +34,7 @@ public class TeleportHandler {
      */
     public TeleportHandler(ScrollTeleportation plugin) {
         this.plugin = plugin;
-        this.taskIds = new HashMap<>();
+        this.taskIDs = new HashMap<>();
         this.readyPlayers = new HashMap<>();
     }
 
@@ -159,51 +159,43 @@ public class TeleportHandler {
     /**
      * Sets the task ID for a player.
      * 
-     * @param playerId The player's UUID
+     * @param player The player to set the task ID for
      * @param taskId The task ID
      */
-    public void setTaskID(UUID playerId, int taskId) {
-        taskIds.put(playerId, taskId);
+    public void setTaskID(Player player, Integer taskId) {
+        taskIDs.put(player.getUniqueId(), taskId);
     }
 
     /**
      * Gets the task ID for a player.
      * 
-     * @param playerId The player's UUID
+     * @param player The player
      * @return The task ID
      */
-    public int getTaskID(UUID playerId) {
-        return taskIds.getOrDefault(playerId, -1);
-    }
-
-    /**
-     * Removes the task ID for a player.
-     * 
-     * @param playerId The player's UUID
-     */
-    public void removeTaskID(UUID playerId) {
-        taskIds.remove(playerId);
+    public Integer getTaskID(Player player) {
+        return taskIDs.get(player.getUniqueId());
     }
 
     /**
      * Cancels a teleportation task.
      * 
-     * @param playerId The player's UUID
+     * @param player The player
      */
-    public void cancelTask(UUID playerId) {
-        int taskId = getTaskID(playerId);
-        if (taskId != -1) {
+    public void cancelTask(Player player) {
+        Integer taskId = getTaskID(player);
+        if (taskId != null) {
             Bukkit.getScheduler().cancelTask(taskId);
-            removeTaskID(playerId);
+            taskIDs.remove(player.getUniqueId());
         }
     }
 
     /**
-     * Gets the map of task IDs.
+     * Cleans up a player's teleportation state.
      * 
-     * @return The map of task IDs
+     * @param player The player to clean up
      */
-    public Map<UUID, Integer> getTaskIDs() {
-        return new HashMap<>(taskIds);
+    public void cleanup(Player player) {
+        readyPlayers.remove(player.getUniqueId());
+        taskIDs.remove(player.getUniqueId());
     }
 } 

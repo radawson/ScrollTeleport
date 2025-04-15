@@ -8,26 +8,44 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.clockworx.scrollteleportation.teleporthandler.TeleportHandler;
 
+/**
+ * Listens for inventory open events to handle teleportation readiness.
+ */
 public class PlayerInvOpenListener implements Listener {
 
     private final ScrollTeleportation plugin;
+    private final TeleportHandler teleportHandler;
 
-    public PlayerInvOpenListener(ScrollTeleportation instance) {
-        this.plugin = instance;
+    /**
+     * Creates a new PlayerInvOpenListener instance.
+     * 
+     * @param plugin The plugin instance
+     */
+    public PlayerInvOpenListener(ScrollTeleportation plugin) {
+        this.plugin = plugin;
+        this.teleportHandler = plugin.getTeleportHandler();
     }
 
+    /**
+     * Handles inventory open events.
+     * 
+     * @param event The inventory open event
+     */
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
-        if (!(event.getPlayer() instanceof Player player)) {
+        if (!(event.getPlayer() instanceof Player)) {
             return;
         }
+
+        Player player = (Player) event.getPlayer();
 
         if (event.getInventory().getType() == InventoryType.PLAYER) {
             return;
         }
 
-        if (!plugin.getTeleportHandler().isReady(player.getName())) {
+        if (!teleportHandler.isReady(player)) {
             return;
         }
 
@@ -36,16 +54,8 @@ public class PlayerInvOpenListener implements Listener {
         }
 
         // Player has opened inventory so teleportation is cancelled
-        plugin.getTeleportHandler().setReady(player.getName(), false);
-
-        Integer taskId = plugin.getTeleportHandler().taskID.get(player.getName());
-        if (taskId != null) {
-            // Cancel teleport task
-            plugin.getServer().getScheduler().cancelTask(taskId);
-
-            // Set taskID null
-            plugin.getTeleportHandler().taskID.put(player.getName(), null);
-        }
+        teleportHandler.cancelTask(player);
+        teleportHandler.setReady(player, false);
 
         // Inform player
         player.sendMessage(Component.text("Teleportation is cancelled because you opened an inventory.", NamedTextColor.RED));

@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.clockworx.scrollteleportation.teleporthandler.TeleportHandler;
+import org.clockworx.scrollteleportation.files.LanguageString;
 
 /**
  * Listens for player movement events to cancel teleportation if the player moves.

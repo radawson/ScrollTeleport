@@ -13,8 +13,7 @@ repositories {
 }
 
 dependencies {
-    // paperweight-userdev will automatically include the Paper API
-    // No need to add paper-api dependency
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 }
 
 java {
@@ -50,5 +49,10 @@ tasks {
                 "Main" to "org.clockworx.scrollteleportation.ScrollTeleportation"
             )
         }
+    }
+
+    // Add dependency between reobfJar and jar
+    reobfJar {
+        dependsOn(jar)
     }
 } 

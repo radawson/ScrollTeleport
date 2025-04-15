@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,10 +25,11 @@ public class ScrollDestination {
 
     private final ScrollTeleportation plugin;
     private final String name;
-    private final DestinationType type;
+    private DestinationType type;
     private Location location;
-    private final int range;
+    private int range;
     private final Random random;
+    private String locationString;
 
     /**
      * Creates a new ScrollDestination instance.
@@ -393,8 +395,49 @@ public class ScrollDestination {
         return locationString;
     }
 
-    private void setDestinationType(DestinationType type) {
+    /**
+     * Gets the location string.
+     * 
+     * @return The location string
+     */
+    public String getLocationString() {
+        return locationString;
+    }
+
+    /**
+     * Sets the location string.
+     * 
+     * @param locationString The location string to set
+     */
+    public void setLocationString(String locationString) {
+        this.locationString = locationString;
+    }
+
+    /**
+     * Sets the destination type.
+     * 
+     * @param type The destination type to set
+     */
+    public void setDestinationType(DestinationType type) {
         this.type = type;
+    }
+
+    /**
+     * Sets the range.
+     * 
+     * @param range The range to set
+     */
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    /**
+     * Sets the location.
+     * 
+     * @param location The location to set
+     */
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     /**

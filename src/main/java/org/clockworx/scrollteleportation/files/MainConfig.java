@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public class MainConfig {
 
-    private final Plugin plugin;
+    private final ScrollTeleportation plugin;
     private FileConfiguration config;
     private File configFile;
     private final Map<String, String> messages;
@@ -43,9 +43,9 @@ public class MainConfig {
      * @param plugin The plugin instance
      */
     public MainConfig(Plugin plugin) {
-        this.plugin = plugin;
+        this.plugin = (ScrollTeleportation) plugin;
         this.messages = new HashMap<>();
-        this.scrollStorage = new ScrollStorage(plugin);
+        this.scrollStorage = new ScrollStorage(this.plugin);
         loadConfig();
     }
 
@@ -469,5 +469,44 @@ public class MainConfig {
      */
     public boolean doLoadChunk() {
         return config.getBoolean("Scroll.load-chunk-on-teleport");
+    }
+
+    /**
+     * Checks if a world is blocked from teleportation.
+     * 
+     * @param worldName The name of the world to check
+     * @return true if the world is blocked
+     */
+    public boolean isWorldBlocked(String worldName) {
+        return config.getStringList("blocked_worlds").contains(worldName);
+    }
+
+    /**
+     * Checks if a location is in a blocked region.
+     * 
+     * @param location The location to check
+     * @return true if the location is in a blocked region
+     */
+    public boolean isRegionBlocked(Location location) {
+        // TODO: Implement region blocking logic
+        return false;
+    }
+
+    /**
+     * Checks if teleportation is blocked during combat.
+     * 
+     * @return true if teleportation is blocked during combat
+     */
+    public boolean isCombatBlocked() {
+        return config.getBoolean("block_combat_teleport", true);
+    }
+
+    /**
+     * Reloads the configuration.
+     */
+    public void reload() {
+        loadConfiguration();
+        loadMessages();
+        scrollStorage.loadScrollsFromConfig();
     }
 } 

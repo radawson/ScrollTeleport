@@ -7,6 +7,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.clockworx.scrollteleportation.ScrollTeleportation;
 import org.clockworx.scrollteleportation.files.LanguageString;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,8 +119,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private void reloadPlugin(CommandSender sender) {
         try {
             plugin.reloadConfig();
-            plugin.getMainConfig().loadConfig();
-            plugin.getLanguageConfig().loadConfig();
+            plugin.getMainConfig().reload();
             sender.sendMessage(LanguageString.RELOAD_SUCCESS.parse());
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to reload plugin configuration", e);
@@ -151,14 +152,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            if (plugin.getScrollStorage().giveScrollToPlayer(target, args[1], amount)) {
-                sender.sendMessage(LanguageString.GIVE_SUCCESS.parse()
-                    .replace("%player%", target.getName())
-                    .replace("%scroll%", args[1])
-                    .replace("%amount%", String.valueOf(amount)));
-            } else {
-                sender.sendMessage(LanguageString.SCROLL_NOT_FOUND.parse());
-            }
+            String scrollName = args[1];
+            plugin.getScrollStorage().giveScrollToPlayer(target, scrollName);
+            Component message = plugin.getMainConfig().getTranslatableMessage(LanguageString.GIVE_SUCCESS);
+            message = message.replaceText(builder -> builder.match("%player%").replacement(target.getName()));
+            message = message.replaceText(builder -> builder.match("%scroll%").replacement(scrollName));
+            sender.sendMessage(message);
         } catch (NumberFormatException e) {
             sender.sendMessage(LanguageString.INVALID_AMOUNT.parse());
         }

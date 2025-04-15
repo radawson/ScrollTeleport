@@ -17,6 +17,7 @@ import org.clockworx.scrollteleportation.ScrollTeleportation;
 import org.clockworx.scrollteleportation.files.LanguageString;
 import org.clockworx.scrollteleportation.storage.Scroll;
 import org.clockworx.scrollteleportation.tasks.TeleportRunnable;
+import org.clockworx.scrollteleportation.teleporthandler.TeleportHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.logging.Level;
 public class ActivateScrollListener implements Listener {
 
     private final ScrollTeleportation plugin;
+    private final TeleportHandler teleportHandler;
     private final List<Material> ignoredBlocks = Arrays.asList(
             Material.CHEST,
             Material.TRAPPED_CHEST,
@@ -59,6 +61,7 @@ public class ActivateScrollListener implements Listener {
      */
     public ActivateScrollListener(ScrollTeleportation plugin) {
         this.plugin = plugin;
+        this.teleportHandler = plugin.getTeleportHandler();
     }
 
     /**
@@ -103,8 +106,10 @@ public class ActivateScrollListener implements Listener {
         }
 
         // Check if the player is already teleporting
-        if (plugin.getTeleportHandler().isReady(player)) {
-            player.sendMessage(Component.text("You are already teleporting!", NamedTextColor.RED));
+        if (teleportHandler.isReady(player)) {
+            teleportHandler.cancelTask(player);
+            teleportHandler.setReady(player, false);
+            player.sendMessage(Component.text("Teleportation cancelled!", NamedTextColor.RED));
             return;
         }
 
@@ -139,7 +144,7 @@ public class ActivateScrollListener implements Listener {
         }
 
         // Set the player as ready to be teleported
-        plugin.getTeleportHandler().setReady(player, true);
+        teleportHandler.setReady(player, true);
 
         // Get the destination location
         try {
@@ -147,7 +152,7 @@ public class ActivateScrollListener implements Listener {
             Location destination = scroll.getDestination().getLocation();
             if (destination == null) {
                 player.sendMessage(Component.text("Invalid destination!", NamedTextColor.RED));
-                plugin.getTeleportHandler().setReady(player, false);
+                teleportHandler.setReady(player, false);
                 return;
             }
 
@@ -162,14 +167,14 @@ public class ActivateScrollListener implements Listener {
             // Schedule the teleportation
             BukkitTask task = new TeleportRunnable(plugin, destination, item, player)
                     .runTaskLater(plugin, delay * 20L);
-            plugin.getTeleportHandler().setTaskID(player.getUniqueId(), task.getTaskId());
+            teleportHandler.setTaskID(player, task.getTaskId());
 
             // Cancel the event
             event.setCancelled(true);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to activate scroll for player " + player.getName(), e);
             player.sendMessage(Component.text("An error occurred while activating the scroll!", NamedTextColor.RED));
-            plugin.getTeleportHandler().setReady(player, false);
+            teleportHandler.setReady(player, false);
         }
     }
 } 

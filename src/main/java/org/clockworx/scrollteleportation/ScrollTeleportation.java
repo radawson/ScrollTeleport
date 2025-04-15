@@ -13,12 +13,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ScrollTeleportation extends JavaPlugin {
 
+    private static ScrollTeleportation instance;
     private MainConfig config;
     private TeleportHandler teleHandler;
     private ScrollStorage scrollStorage;
 
     @Override
     public void onEnable() {
+        instance = this;
         // Initialize components
         this.config = new MainConfig(this);
         this.teleHandler = new TeleportHandler(this);
@@ -56,6 +58,10 @@ public class ScrollTeleportation extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("scroll").setExecutor(new CommandHandler(this));
+    }
+
+    public static ScrollTeleportation getInstance() {
+        return instance;
     }
 
     public MainConfig getMainConfig() {
